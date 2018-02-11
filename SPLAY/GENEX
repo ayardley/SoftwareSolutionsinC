@@ -1,0 +1,19 @@
+:
+# shell script to generate some example data for the spexample.c
+# program.  Uses awk -- sorry if you don't have one.
+#
+#
+
+awk < /dev/null '
+
+END {
+
+    nobj = 10
+    nstates = 4
+    nlines = 50
+
+    for( i = 0; i < nlines ; i++ )
+    	printf("%d\tobject%d\tstate%d\n", i, rand()*nobj,  rand()*nstates )
+}
+' 
+

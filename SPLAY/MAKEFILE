@@ -1,0 +1,104 @@
+#
+#  Copyright (c) 1994 by Academic Press, Boston, Massachusetts.
+#  Written by David Brower.  Not derived from licensed software.
+#  From the book "Software Solutions in C", edited by Dale Schumacher.
+# 
+#  Permission is granted to anyone to use this software for any
+#  purpose on any computer system, and to redistribute it in any way,
+#  subject to the following restrictions:
+# 
+#    1. The author is not responsible for the consequences of use of
+#	this software, no matter how awful, even if they arise
+#	from defects in it.
+# 
+#    2. The origin of this software must not be misrepresented, either
+#	by explicit claim or by omission.
+# 
+#    3. Altered versions must be plainly marked as such, and must not
+#	be misrepresented (by explicit claim or omission) as being
+#	the original software.
+# 
+#    4. This notice must not be removed or altered.
+#
+
+# POSIX-style Makefile for splay tree library
+
+# Use this to build alternate key types.  Default is void *.
+# KEYTYPE   =	-DKEYTYPE=int
+# KEYTYPE   =	-DKEYTYPE="char *"
+KEYTYPE =
+
+# Use this to build alternate data types.  Default is void *.
+# DATATYPE  =	-DDATATYPE=int
+# DATATYPE  =	-DDATATYPE="char *"
+DATATYPE =
+
+DEFINES	=	$(KEYTYPE)
+
+CDEBUGFLAGS =	#-g +w1
+
+CFLAGS	=	$(CDEBUGFLAGS) $(DEFINES)
+
+LIBMALLOC =	$(MALLOC)
+
+LIB	=	libsptree.a
+
+OBJ =		spdelete.o spdeq.o spempty.o spenq.o spenqaft.o \
+		spenqbef.o spenqpri.o spfhead.o spfnext.o \
+		spfprev.o spftail.o sphead.o spminit.o spuinit.o \
+		spinstal.o splookup.o spnext.o spprev.o sprscan.o \
+		spscan.o sptail.o spsplay.o
+
+CSRC	=	spdelete.c spdeq.c spempty.c spenq.c spenqaft.c \
+		spenqbef.c spenqpri.c spfhead.c spfnext.c \
+		spfprev.c spftail.c sphead.c spminit.c spuinit.c \
+		spinstal.c splookup.c spnext.c spprev.c sprscan.c \
+		spscan.c sptail.c spsplay.c \
+		sptree.h spcmp.h \
+		spexamp.c spplay.c
+
+SRC	=	README Makefile $(CSRC) genplay genex exdata excanon
+
+ARCHIVE =	libsptree.a
+
+CC	=	gcc -ansi -pedantic -Wall -Wtrigraphs
+AR	=	ar
+ARFLAGS =	ruv
+RANLIB	=	ranlib
+
+all:		lib spplay spexamp runex
+
+lib:		$(OBJ)
+		${AR} ${ARFLAGS} ${ARCHIVE} $(OBJ)
+		${RANLIB} ${ARCHIVE}
+
+$(OBJ):		sptree.h spcmp.h
+
+spplay.o:	sptree.h spplay.c
+
+spplay:		spplay.o $(OBJ) $(LIBMALLOC)
+		$(CC) -o $@ $?
+
+spexamp:	spexamp.o $(OBJ) $(LIBMALLOC)
+		$(CC) -o $@ $?
+
+pdata:		/etc/passwd genplay
+		sh genplay > pdata
+
+runplay:	spplay pdata
+		spplay < pdata
+
+exdata:		genex
+		sh genex > $@
+
+runex:		spexamp exdata
+		spexamp exdata > exresult
+		diff excanon exresult && echo ran OK || echo run errors!
+
+shar:		$(SRC)
+		shar $(SRC) > shar
+
+clean:
+		rm -f *.o $(LIB) spplay spexamp \#* *~ *data
+
+

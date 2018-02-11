@@ -1,0 +1,29 @@
+CC= gcc
+CFLAGS=	-ansi -pedantic -Wall -g -DBIG_ENDIAN=0
+#CFLAGS=	-ansi -pedantic -Wall -g -DBIG_ENDIAN=1
+#CFLAGS=	-O
+OBJS=	btree.o btree_io.o mem_op.o port_io.o
+PROGS=	addr
+#PROGS=	db_test ex01
+DBFILES=addr.cfg addr.dbf addr.ddx addr.mdx addr.out \
+	ex01_db.cfg ex01_db.dbf ex01_db.ddx ex01_db.mdx ex01.ddl
+
+all: $(PROGS)
+
+clean:
+	rm -f $(PROGS) $(OBJS) $(DBFILES)
+
+test: addr
+	./addr <addr.in
+	./addr >addr.out
+	diff addr.in addr.out
+
+addr: addr.c $(OBJS)
+	$(CC) $(CFLAGS) -o addr addr.c $(OBJS)
+
+db_test: db_test.c $(OBJS)
+	$(CC) $(CFLAGS) -o db_test db_test.c $(OBJS)
+
+ex01: ex01.c $(OBJS)
+	$(CC) $(CFLAGS) -o ex01 ex01.c $(OBJS)
+

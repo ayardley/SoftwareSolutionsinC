@@ -1,0 +1,16 @@
+#
+# modem i/o for os/2, using Microsoft C for OS/2
+#
+
+CFLAGS=-Gms -Ox -nologo -DOS2=1 -I..
+
+OBJECTS= carrier.obj disable.obj dobreak.obj enable.obj flush.obj \
+	receive.obj slowputs.obj ttyclose.obj ttyin.obj ttyopen.obj \
+	ttyout.obj ttyspeed.obj ttystat.obj ttywrite.obj ttimeout.obj
+
+
+os2io.lib: $(OBJECTS)
+	@rm -f dosio.lib
+	lib dosio +carrier+disable+dobreak+enable+flush+receive+slowputs+ttimeout;
+	lib dosio +ttyclose+ttyin+ttyopen+ttyout+ttyspeed+ttystat+ttywrite;
+	@rm -f dosio.bak

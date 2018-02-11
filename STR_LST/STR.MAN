@@ -1,0 +1,91 @@
+STR(3)			Programmer's Reference Manual			STR(3)
+
+NAME
+	STRlen, STRcopy, STRadd, STRrem, STRnorm, STRfree -- dynamic
+	string manipulation functions
+
+SYNOPSIS
+	#include "str.h"
+
+	size_t
+	STRlen(STR str)
+
+	STR
+	STRcopy(char *s)
+
+	STR
+	STRadd(STR str, STR cur, int c)
+
+	int
+	STRrem(STR str, STR cur)
+
+	STR
+	STRnorm(STR str)
+
+	STR
+	STRfree(STR str)
+
+DESCRIPTION
+	These functions manipulate ``STR'' objects which are actually
+	typedef'd ``char *''.  The strings are managed in malloc()ed
+	memory and are resized by power-of-2 intervals.  To obtain good
+	performance, these routines require that all trailing bytes in
+	the allocated space be '\0'.  The STR functions maintain this
+	condition, but this means that it is not safe to use these
+	functions on "normal" strings.  It is safe, however, to use a
+	STR object where a "normal" string is expected.
+
+	STRlen() determines that length of the active portion of the
+	string (eg. [h][e][l][l][o][\0][\0][\0] has a length of five).
+	Zero is returned for both empty and (STR)0 arguments.
+
+	STRcopy() creates a STR from a "normal" string or another STR.
+
+	STRadd() adds a new character to a STR.  The ``cur'' pointer
+	indicates which character to insert before in ``str''.  The
+	typical case of adding to the end of the string can be achieved
+	either by pointing ``cur'' to the first '\0' in ``str'', or
+	more easily by setting ``cur'' to (STR)0.  Note that a new and
+	potentially different STR is returned.  The object will be
+	different if reallocation required moving the object in memory.
+
+	STRrem() removes and returns a character from a STR.  The
+	``cur'' pointer indicates which character to remove.  The
+	STR object will not be reallocated smaller by this function
+	and therefore will not move in memory.
+
+	STRnorm() normalizes a STR by reallocating the storage to the
+	smallest power-of-2 size which will hold the string.  This
+	function can be used to reclaim storage after a large number
+	of STRrem() calls.  The new and potentially different STR is
+	returned.
+
+	STRfree() releases the memory occupied by a STR and returns
+	a (STR)0 for assignment to previous references to the STR.
+	This function handles a (STR)0 argument as a safe no-op.
+
+MACROS
+	The following convenience macros are provided to support some
+	common operations on STR objects.
+
+	#define	STRpush(str, c)		STRadd(str, str, c)
+	#define	STRpop(str)		STRrem(str, str)
+	#define	STRput(str, c)		STRadd(str, (STR)0, c)
+
+EXAMPLE
+	STR
+	STRgets(FILE *f)		/* read a line of input from ``f'' */
+	{
+		STR str;
+		int c;
+
+		str = STRcopy("");
+		while (str && ((c = getc(f)) != EOF) && (c != '\n')) {
+			str = STRadd(str, (STR)0, c);
+		}
+		if ((c == EOF) && (STRlen(str) <= 0)) {
+			str = STRfree(str);
+		}
+		return str;
+	}
+

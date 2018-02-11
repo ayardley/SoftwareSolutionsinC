@@ -1,0 +1,96 @@
+LST(3)			Programmer's Reference Manual			LST(3)
+
+NAME
+	LSTlen, LSTinit, LSTadd, LSTrem, LSTnorm, LSTfree -- dynamic
+	list manipulation functions
+
+SYNOPSIS
+	#include "lst.h"
+
+	size_t
+	LSTlen(LST lst)
+
+	LST
+	LSTinit(void *p, ...)
+
+	LST
+	LSTadd(LST lst, LST cur, void *p)
+
+	void *
+	LSTrem(LST lst, LST cur)
+
+	LST
+	LSTnorm(LST lst)
+
+	LST
+	LSTfree(LST lst)
+
+DESCRIPTION
+	These functions manipulate ``LST'' objects which are actually
+	typedef'd ``void **''.  The lists are managed in malloc()ed
+	memory and are resized by power-of-2 intervals.  To obtain good
+	performance, these routines require that all trailing pointers
+	in the allocated space be NULL.  The LST functions all maintain
+	this condition.  Note that only the pointer array is managed
+	as part of the LST object.  Memory referenced by pointers in
+	the list must be managed by the application programmer.
+
+	LSTlen() determines that length of the active portion of the
+	list, that is the number of initial non-NULL elements in the
+	list.  Zero is returned for both empty and (LST)0 arguments.
+
+	LSTinit() creates a new LST from a variable argument list.
+
+	LSTadd() adds a new element to a LST.  The ``cur'' pointer
+	indicates which element to insert before in ``lst''.  The
+	typical case of adding to the end of the list can be achieved
+	either by pointing ``cur'' to the first NULL in ``lst'', or
+	more easily by setting ``cur'' to (LST)0.  Note that a new and
+	potentially different LST is returned.  The object will be
+	different if reallocation required moving the object in memory.
+
+	LSTrem() removes and returns an element from a LST.  The
+	``cur'' pointer indicates which element to remove.  The
+	LST object will not be reallocated smaller by this function
+	and therefore will not move in memory.
+
+	LSTnorm() normalizes a LST by reallocating the storage to the
+	smallest power-of-2 size which will hold the list.  This
+	function can be used to reclaim storage after a large number
+	of LSTrem() calls.  The new and potentially different LST is
+	returned.
+
+	LSTfree() releases the memory occupied by a LST and returns
+	a (LST)0 for assignment to previous references to the LST.
+	This function handles a (LST)0 argument as a safe no-op.
+
+MACROS
+	The following convenience macros are provided to support some
+	common operations on LST objects.
+
+	#define	LSTpush(lst, p)		LSTadd(lst, lst, p)
+	#define	LSTpop(lst)		LSTrem(lst, lst)
+	#define	LSTput(lst, p)		LSTadd(lst, (LST)0, p)
+
+EXAMPLE
+	LST
+	LSTgetfile(FILE *f)		/* create a list of lines from ``f'' */
+	{
+		LST lst;
+		LST lp;
+		STR str;
+		int c;
+
+		lst = LSTinit((void *)0);
+		while (lst && (str = STRgetln(f))) {
+			lst = LSTadd(lst, (LST)0, str);
+		}
+		if (!feof(f)) {
+			for (lp = lst; lp && (str = (STR)*lp); ++lp) {
+				STRfree(str);
+			}
+			lst = LSTfree(lst);
+		}
+		return lst;
+	}
+

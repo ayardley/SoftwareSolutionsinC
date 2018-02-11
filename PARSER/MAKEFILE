@@ -1,0 +1,31 @@
+#
+#	Makefile for parser toolkit and sample programs
+#
+CFLAGS=	-O -I../str_lst
+#CFLAGS=	-g -I../str_lst
+#CFLAGS=	-g -ansi -pedantic -Wall -I../str_lst
+HDRS=	parser.h buffer.h
+OBJS=	parser.o buffer.o
+LNKOBJS=../str_lst/str.o ../str_lst/lst.o
+PROGS=	calc bnf2c
+
+all: $(PROGS) $(OBJS)
+
+clean:
+	rm -f $(PROGS) $(OBJS)
+
+test: bnf2c
+	./bnf2c <sample.bnf >sample.c
+	diff sample.out sample.c
+
+calc: calc.c $(OBJS)
+	$(CC) $(CFLAGS) -o calc calc.c $(OBJS) $(LNKOBJS)
+
+bnf2c: bnf2c.c $(OBJS)
+	$(CC) $(CFLAGS) -o bnf2c bnf2c.c $(OBJS) $(LNKOBJS)
+
+$(OBJS): $(HDRS)
+
+.c.o:
+	$(CC) $(CFLAGS) -c $<
+

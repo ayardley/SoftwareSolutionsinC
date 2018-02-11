@@ -1,0 +1,21 @@
+#
+#	Makefile for CASH routines
+#
+
+#CFLAGS=	-O
+CFLAGS=	-g -ansi -pedantic -Wall
+
+all: cash.o
+
+clean:
+	rm -f cash.o testcash
+
+test: testcash
+	./testcash
+
+testcash: cash.c
+	$(CC) $(CFLAGS) -DTEST_MAIN -o testcash cash.c ../str_lst/str.o
+
+cash.o: cash.c
+	$(CC) $(CFLAGS) -c cash.c
+

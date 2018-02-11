@@ -1,0 +1,20 @@
+#
+#	Makefile for HASH functions
+#
+
+CFLAGS=	-O
+#CFLAGS=	-g -ansi -pedantic -Wall
+OBJS=	hash.o fletch.o lfletch.o
+
+all: $(OBJS)
+
+clean:
+	rm -f $(OBJS) hashtest output.new
+
+test: hashtest
+	./hashtest <sample >output.new
+	diff output.cmp output.new
+
+hashtest: hashtest.c $(OBJS)
+	$(CC) $(CFLAGS) -o hashtest hashtest.c $(OBJS)
+

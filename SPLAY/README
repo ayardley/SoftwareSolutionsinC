@@ -1,0 +1,25 @@
+This directory contains all source for the splay tree routines
+discussed in "Software Solutions in C".  It includes the library code,
+the example program presented in the text with some test data, and
+another standalone demo/test program.  The Makefile is written for
+POSIX-like systems.
+
+The program "spexamp" is the example as presented in the book.  The
+makefile target "runex" will run it against the "exdata" file supplied
+and compare it against the known-to-be-good "excanon" result file.
+The Bourne shell/AWK program "genex" can be used to generate other
+data sets, or to recreate "exdata" if necessary.
+
+The program "spplay" lets you type things in and see what happens.  It
+comes with a "genplay" program that will turn a UNIX password file
+into a series of tests that show ordering and proper operation of the
+delete function.  The "runplay" target in the Makefile will make a
+"pdata" file using "genplay", and feed that into "spplay".  The
+internediate results are (of course) highly dependant on your password
+file, but the last "e" print of entries should have no output as
+everything was supposed to have been deleted.
+
+-dB
+
+
+

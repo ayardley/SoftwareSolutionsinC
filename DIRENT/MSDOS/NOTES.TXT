@@ -1,0 +1,110 @@
+
+
+	NOTES FOR POSIX-COMPATIBLE C LIBRARY DIRECTORY-ACCESS ROUTINES
+
+
+Older UNIX C libraries lacked support for reading directories, so historically
+programs had knowledge of UNIX directory structure hard-coded into them.  When
+Berkeley changed the format of directories for 4.2BSD, it became necessary to
+change programs to work with the new structure.  Fortunately, Berkeley designed
+a small set of directory access routines to encapsulate knowledge of the new
+directory format so that user programs could deal with directory entries as an
+abstract data type.  (Unfortunately, they didn't get it quite right.)  The
+interface to these routines was nearly independent of the particular
+implementation of directories on any given UNIX system; this has become a
+particularly important requirement with the advent of heterogeneous network
+filesystems such as NFS.  The availability of C for other systems led to the
+porting of this package beyond the UNIX domain; the system-independent
+interface works well for non-UNIX environments also.  This MS-DOS version was
+implemented by Doug Gwyn, after studying code provided by Steve Summit, Steve
+Manes, and others.  Public-domain implementations for AmigaDOS, Aztec C65, and
+GS/OS are also available.
+
+It has consequently become possible to write portable applications that search
+directories by restricting all directory access to use these new interface
+routines.  The sources supplied here are an original implementation by Doug
+Gwyn, conforming as closely to published standards as possible, and are in the
+PUBLIC DOMAIN to encourage their widespread adoption.  They support access to
+MS-DOS directories by invoking system calls to build a linked list of entries.
+These routines should be added to the standard C library on MS-DOS systems if
+not already present (recent releases of MS-DOS C compilers usually already
+provide these), and all existing applications should be changed to use this
+interface.  Once this is done (and similar effort expended in the UNIX
+community), there should be no portability problems between UNIX and MS-DOS due
+to differences in underlying directory structures.  (When porting your
+applications to UNIX systems, you can carry the corresponding UNIX package
+around with you.)
+
+One annoying compatibility problem has arisen along the way, namely that the
+original Berkeley interface used the same name, struct direct, for the new data
+structure as had been used for the original UNIX filesystem directory record
+structure.  This name was changed by the IEEE 1003.1 (POSIX) Working Group to
+"struct dirent" and was picked up for SVR3 under the new name; it is also the
+name used in this portable package.  I believe it is necessary to bite the
+bullet and adopt the new non-conflicting name.  Code using a 4.2BSD-compatible
+package needs to be slightly revised to work with this new package, as follows:
+	Change
+		#include <ndir.h>	/* Ninth Edition UNIX */
+	or
+		#include <sys/dir.h>	/* 4.2BSD */
+	or
+		#include <dir.h>	/* old BRL System V emulation */
+	to
+		#include <sys/types.h>	/* if not already #included */
+		#include <dirent.h>
+
+	Change
+		struct direct
+	to
+		struct dirent
+
+	Change
+		(anything)->d_namlen
+	to
+		strlen( (anything)->d_name )
+
+There is a minor compatibility problem in that the closedir() function was
+originally defined to have type void, but IEEE 1003.1 changed this to type int.
+However, the difference does not affect most applications, because they seldom
+test the return from closedir().
+
+Error handling is not completely satisfactory, due to the variety of possible
+failure modes in a general setting.  For example, the rewinddir() function
+might fail, but there is no good way to indicate this.  I have tried to
+follow the specifications in IEEE 1003.1 and the SVID as closely as possible,
+but there are minor deviations in this regard.  Applications should not rely
+too heavily on exact failure mode semantics.
+
+Please do not change the new standard interface in any way, as that would
+defeat the major purpose of this package!  (It's okay to alter the internal
+implementation if you really have to.)
+
+Sorry, no installation instructions are available; MS-DOS C compilers vary in
+detail and I'm not familiar with all of them.  If you have a recent release
+of one of the major compilers (e.g. MicroSoft C or Borland Turbo C), these
+functions are probably already included in the standard C library and my
+version should then NOT replace them.  If, however, you do need to install this
+package on your system, then all I can say is that dirent.h should be installed
+wherever the standard headers reside and the *.c files should be compiled and
+the resulting objects added to the system C library.
+
+This code was tested under Turbo C++ 3.1 (Visual Edition for Windows) but
+should also work under MicroSoft C.  If you want to try this code out on a
+system that already provides these functions, in order to avoid interference
+with the vendor-supplied implementation you should rename dirent.h to mydent.h
+and edit the *.c files to change the corresponding #include lines.
+
+This implementation is provided by:
+
+	Douglas A. Gwyn
+	U.S. Army Research Laboratory
+	AMSRL-CI-CC
+	Aberdeen Proving Ground, MD 21005-5067
+
+	(410)278-8945
+
+	Gwyn@ARL.Army.Mil
+
+This is UNSUPPORTED, use-at-your-own-risk, free software in the public domain.
+However, I would appreciate hearing of any actual bugs you find in this
+implementation and/or any improvements you come up with.

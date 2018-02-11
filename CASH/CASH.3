@@ -1,0 +1,69 @@
+.\" cash
+.\" Written by D'Arcy J.M. Cain
+.\" Copyright 1992, 1993
+.TH CASH 3 07/01/93
+.SH NAME
+cash \- functions that allow money to be dealt with as integral values
+.SH SYNOPSIS
+\#include <cash.h>
+.br
+const char *cash(long value, int parens, int points, int comma)
+.br
+long atocash(const char *s, int fpoint)
+.br
+const char *cash_words(long v)
+.br
+.SH DESCRIPTION
+These functions allow money amounts to be stored and manipulated as
+longs by converting to pennies and then formatting the output as
+required.
+.PP
+The
+.B cash
+function takes a value and returns a string representation of the amount.
+the
+.I parens
+parameter is a flag that defines how negative numbers are displayed.  If
+true they are surrounded by parentheses.  If zero then a minus sign (-)
+is prepended.  The
+.I points
+parameter is the number of implied decimal points.  The
+.I comma
+parameter is the character to use for separating the groups of digits
+in the output.  Usual values would be ",", "." and the space
+character but any character can be used.  If this parameter is zero
+then no separation is done.  The period character is taken from the
+locale in any case.
+The function uses a circular queue of static strings so that sixteen
+calls to cash can be made before the space is reused.  This allows multiple
+calls to cash within the same printf(3) call for example.
+.PP
+The
+.B atocash
+function simply accepts a pointer to a string representation of 
+a decimal number and converts it to a long.
+The number of assumed decimal places in the result is specified by the
+.I fpoint
+parameter.  Note that this value doesn't need to be reflected in the
+ASCII string representation of the number.
+It recognizes a leading sign character and
+stops at the first character that is invalid.  It rounds off the number
+based on the number of decimal places.
+.PP
+The
+.B cash_words
+function returns a pointer to a string representation of the amount in
+words.
+.SH AUTHOR
+D\'Arcy J.M. Cain
+.br
+PlanIX, Inc.
+.br
+Toronto, Ontario
+.br
+email: darcy@druid.com
+.SH COPYRIGHT
+Copyright 1991, 1992, 1993 D'Arcy J.M. Cain
+.br
+These functions are discussed in detail in the book "Software Solutions
+in C", edited by Dale Schumacher, ISBN 0-12-632360-7.

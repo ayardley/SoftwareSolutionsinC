@@ -1,0 +1,21 @@
+#
+#	Makefile for STR and LST routines
+#
+
+CFLAGS=	-ansi -pedantic -Wall
+
+all: str.o lst.o
+
+clean:
+	rm -f str.o lst.o testrig test.out
+
+test:
+	$(CC) $(CFLAGS) -DTEST -o testrig testrig.c lst.c str.c
+	testrig >test.out
+
+str.o: str.c
+	$(CC) $(CFLAGS) -c str.c
+
+lst.o: lst.c
+	$(CC) $(CFLAGS) -c lst.c
+

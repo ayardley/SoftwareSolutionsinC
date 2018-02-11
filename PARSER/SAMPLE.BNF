@@ -1,0 +1,36 @@
+#
+#	This is a sample BNF to be processed by BNF2C
+#
+
+Lines	::=	'.'
+	|	Expr '\n' Lines
+
+Expr	::=	Assign
+	|	Addop
+
+Assign	::=	Ident '=' Expr
+
+Addop	::=	Mulop Addtail
+Addtail	::=	'+' Mulop Addtail
+	|	'-' Mulop Addtail
+	|
+
+Mulop	::=	Unop Multail
+Multail	::=	'*' Unop Multail
+	|	'/' Unop Multail
+	|
+
+Unop	::=	'+' Unop
+	|	'-' Unop
+	|	Prim
+
+Prim	::=	Ident
+	|	Number
+	|	'(' Expr ')'
+
+Ident	::=	Letter Ident
+	|	Letter
+
+Number	::=	'+' Digits | '-' Digits | Digits
+Digits	::=	Digit Digits | Digit
+Digit	::=	[0123456789]

@@ -1,0 +1,18 @@
+Usage: hashtest [init_size]
+
+Reads from stdin; inserts each word read into a hash table; if that
+word is already there, then deletes it from the hash tables.
+
+By default, it just prints out the final contents of the hash table
+(i.e., a list of all words that appear an odd number of times in the
+input).
+
+If all components are compiled with -DDEBUG, this will dump all the hash
+table contents and collision indicators after each step.  It will also
+check for words that begin with the following characters:
+  -	Try to delete the word (minus the "-") and report result
+  +	Insert the word (minus the "+") using the HASHdup operation
+  ?	Just look up the word (minus the "?") and report result
+  !	Look for a duplicate word (minus the "!") and report result (HASHnxt)
+You can test the HASHdup function with input like "dup +dup ?dup !dup !dup"
+

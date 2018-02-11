@@ -1,0 +1,69 @@
+	times.txt -- record of execution times for various architectures
+
+"repeats" total execution time (seconds), maximal optimization:
+
+algorithm	Apple IIGS	VAX-11/780	SGI 280/S	Cray X-MP
+0 (native)	  68.0 <	 38.0 (qs)	 2.6		 2.1
+1 ni		 381.0		498.2		10.4		14.4
+2 bf		 155.0		 38.0		 2.2		 5.8
+3 kmp		 901.0		137.9		 7.3		12.3
+4 bm		 118.0		 18.0 <		 2.1 <		 1.1 <
+5 rk		8664.0		730.5		34.8		38.3
+6 qs		 155.0		 37.5		 2.3		 4.4
+7 nm *		  31.0		  1.2		 0.0		 0.1
+
+speed(MIPS):	0.1		1.0		19.6		15.6
+
+algorithm	Sun-4/470	Sun-3/50	Gould PN9080	KSR1-64
+0 (native)	817.2		11111.0		  9.8 (qs)	16.0
+1 ni		 13.5		  134.0		 59.4		22.5
+2 bf		  3.7		   22.7		  9.8		 9.3
+3 kmp		  9.0		   52.2		 35.8		19.5
+4 bm		  1.6 <		   15.0 <	  9.3		 2.0 <
+5 rk		 70.7		  189.5		104.1		19.9
+6 qs		  2.8		   19.6		  8.7 <		 4.7
+7 nm *		  0.1		    0.6		  0.2		 0.4
+
+speed(MIPS):	10.9		3.4		5.7		19.2
+
+algorithm	geometric average/bm
+0 (native)	 7.4
+1 ni		 8.6
+2 bf		 2.0
+3 kmp		 5.9
+4 bm		 1.0 <
+5 rk		23.7
+6 qs		 1.7
+7 nm *		 0.0
+
+speed(MIPS):	N/A
+
+* nm measures "overhead" which should be subtracted from the other times.
+
+< points to the fastest algorithm on each system.
+
+
+While my article was being proof-typeset, I had the opportunity to test
+these algorithms on an IBM PC clone (33MHz 386), but I didn't have the
+correct test data on hand; I cobbled together something similar (3358
+upper-case encrypted characters) in its place, with the following
+results which I used only to estimate the relative speed of the 386:
+
+"repeats" total execution time (seconds), maximal optimization,
+	large memory model:
+
+algorithm	IBM PC 386-33	VAX-11/780
+0 (native)	  3.79121 <	 24.6 (qs)
+1 ni		 80.4396	338.1
+2 bf		 19.8901	 40.9
+3 kmp		 35.6044	132.3
+4 bm		  5.16484	 18.7 <
+5 rk		536.593		527.1
+6 qs		 16.5385	 41.0
+7 nm *		  0.494505	  1.1
+
+speed(MIPS):	1.6		1.0
+
+Since I didn't have the fine-tuned source code on hand I had to type
+it in from a printed copy of my article, which explains why the code
+ran somewhat slower than would be expected if the best code were used.

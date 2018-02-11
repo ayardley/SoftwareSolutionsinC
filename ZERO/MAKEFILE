@@ -1,0 +1,28 @@
+#
+#	Makefile for Gnu C under BSDI
+#
+CC=gcc
+#CFLAGS=-I. -ansi -pedantic -Wall
+CFLAGS=-I. -O
+
+all: zero.o sample
+
+zero.o: zero.c zero.h
+	$(CC) $(CFLAGS) -c zero.c
+
+test: demo ok
+	demo >log
+	diff ok log
+
+clean:
+	rm -f zero.o sample demo demo.o log
+
+sample: sample.c zero.o
+	$(CC) $(CFLAGS) -o sample sample.c zero.o -lm
+
+demo: demo.c zero.c zero.h
+	$(CC) $(CFLAGS) -DTEST -o demo demo.c zero.c -lm
+
+ok:
+	demo >ok
+

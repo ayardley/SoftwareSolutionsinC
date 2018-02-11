@@ -1,0 +1,26 @@
+#
+#	Makefile for expression parser and evaluator
+#
+#CFLAGS=	-O -DFOLD_CONST
+#CFLAGS=	-g -DFOLD_CONST
+CFLAGS=	-g -DDEBUG -DFOLD_CONST
+#CFLAGS=	-g -DDEBUG
+#CFLAGS=	-ansi -pedantic -Wall -DFOLD_CONST
+HDRS=	expr.h
+OBJS=	expr.o eval.o func.o op.o parser.o var.o lexer.o util.o
+LNKOBJS=../str_lst/str.o ../str_lst/lst.o
+PROGS=	expr
+
+all: $(PROGS)
+
+clean:
+	rm -f $(PROGS) $(OBJS)
+
+expr: $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LNKOBJS) -lm
+
+$(OBJS): $(HDRS)
+
+.c.o:
+	$(CC) $(CFLAGS) -c $<
+

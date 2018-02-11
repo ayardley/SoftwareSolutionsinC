@@ -1,0 +1,23 @@
+#	make.gen -- Makefile to build "tstopt" for UNIX-like systems
+
+TEST	=	tstopt
+MODULES	=	getopt.o getsub.o
+DEFINES	=	# -DDEBUG -DRIGID_SPEC -DROBUST -DSET_OPTOPT
+
+# Edit the following to provide a Standard C environment:
+CC	=	cc
+CFLAGS	=	$(DEFINES) -O
+# Cray:		$(DEFINES) -O3 -haggress,align,fastaddr -D__STDC__
+# KSR1:		$(DEFINES) -O2 -ansi -qdiv
+LDFLAGS	=
+
+all:		$(TEST)
+
+$(TEST):	$(TEST).o $(MODULES)
+	$(CC) $(LDFLAGS) -o $@ $@.o $(MODULES)
+
+clean:
+	rm -f $(TEST).o $(MODULES)
+
+clobber:	clean
+	rm -f $(TEST)

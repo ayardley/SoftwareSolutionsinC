@@ -1,0 +1,29 @@
+#	make.gen -- Makefile to build "repeat" and "tststr" for UNIX systems
+
+TARGET	=	repeat
+TEST	=	tststr
+MODULE0	=	nmstr.o
+MODULES	=	bfstr.o bmstr.o kmpstr.o nistr.o qsstr.o rkstr.o
+# Define LOWAL as 1 to exclude native (Standard C) strstr():
+DEFINES	=	-DLOWAL=0 # -DROBUST -DDEBUG
+
+# Edit the following to provide a Standard C environment:
+CC	=	cc
+CFLAGS	=	$(DEFINES) -O
+# Cray:		$(DEFINES) -O3 -haggress,align,fastaddr -D__STDC__
+# KSR1:		$(DEFINES) -O2 -ansi -qdiv
+LDFLAGS	=
+
+all:		$(TARGET) $(TEST)
+
+$(TARGET):	$(TARGET).o $(MODULE0) $(MODULES)
+	$(CC) $(LDFLAGS) -o $@ $@.o $(MODULE0) $(MODULES)
+
+$(TEST):	$(TEST).o $(MODULES)
+	$(CC) $(LDFLAGS) -o $@ $@.o $(MODULES)
+
+clean:
+	rm -f $(TARGET).o $(TEST).o $(MODULE0) $(MODULES)
+
+clobber:	clean
+	rm -f $(TARGET) $(TEST)

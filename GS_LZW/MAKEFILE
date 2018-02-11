@@ -1,0 +1,29 @@
+#
+#	Makefile for LZW compression/decompression GSTREAM routines
+#
+
+CFLAGS=	-O
+#CFLAGS=	-g -ansi -pedantic -Wall
+OBJS=	gslzw.o gscomp.o gsdecomp.o
+LNKOBJS=../gstream/gstream.o ../str_lst/str.o
+
+all: $(OBJS)
+
+clean:
+	rm -f $(OBJS) tst_lzw
+
+test: tst_lzw
+	./tst_lzw sample
+
+tst_lzw: tst_lzw.c $(OBJS)
+	$(CC) $(CFLAGS) -o tst_lzw tst_lzw.c $(OBJS) $(LNKOBJS)
+
+gslzw.o: gslzw.c
+	$(CC) $(CFLAGS) -c gslzw.c
+
+gscomp.o: gscomp.c
+	$(CC) $(CFLAGS) -c gscomp.c
+
+gsdecomp.o: gsdecomp.c
+	$(CC) $(CFLAGS) -c gsdecomp.c
+

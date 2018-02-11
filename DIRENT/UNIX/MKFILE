@@ -1,0 +1,81 @@
+#	mkfile -- Makefile for systems similar to the Research version of UNIX
+
+#	Created:	30-May-1989	bts!bill, DJM@AI.MIT.Edu
+#	Last edit:	16-Aug-1993	Gwyn@ARL.Army.Mil
+
+# DEFS must define exactly one of the following:
+#	UFS		original UNIX filesystem (14-character name limit)
+#	BFS		4.2BSD (also 4.3BSD) native filesystem (long names)
+#	NFS		getdirentries() system call
+# DEFS can also define any combination of the following that are relevant:
+#	ATT_SPEC	check user buffer address for longword alignment
+#	BSD_SYSV	BRL UNIX System V emulation environment on 4.nBSD
+#	INT_SIGS	<signal.h> thinks that signal handlers have
+#			return type int (rather than the standard void)
+#	SIZ_LONG	if type of "sizeof" is unsigned long
+#	NEG_DELS	deleted entries have negative inode number rather
+#			than the usual 0
+#	UNK		have _getdents() system call, but kernel may not
+#			support it
+DEFS	= -DUFS
+INCS	= -I.
+OPTS	= -O
+
+AR	= ar
+ARFLAGS	= r
+CC	= cc
+CFLAGS	= $(DEFS) $(INCS) $(OPTS)
+LDFLAGS	= -n
+LINT	= lint
+LFLAGS	= -a
+# Set RANLIB to "echo" if you don't need this kludgy utility:
+RANLIB	= ranlib
+
+INCDIR	= /usr/include
+LIBDIR	= /lib
+LIBRARY	= $(LIBDIR)/libc.a
+MANDIR	= /usr/man
+MAN2DIR	= $(MANDIR)/man2
+MAN3DIR	= $(MANDIR)/man3
+MAN5DIR	= $(MANDIR)/man5
+
+JUNK	= core a.out LINT
+
+SRCS	= clodir.c opedir.c rewdir.c seedir.c teldir.c readir.c getden.c
+OBJS	= clodir.o opedir.o rewdir.o seedir.o teldir.o readir.o getden.o
+
+# Default compilation rule (avoids problems on SunOS etc.):
+.SUFFIXES:	.c .o
+.c.o:
+	$(CC) $(CFLAGS) -c $<
+
+$(LIBRARY):	$(OBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS)
+	$(RANLIB) $@
+
+$(OBJS):	dirent.h sys/dirent.h
+
+install:	install_hdr install_lib install_man
+
+install_hdr:	dirent.h sys/dirent.h
+	cp dirent.h $(INCDIR)/dirent.h
+	cp sys/dirent.h $(INCDIR)/sys/dirent.h
+
+install_lib:	$(LIBRARY)
+
+install_man:	getden.man direct.man dirent.man
+	cp getden.man $(MAN2DIR)/getdents.2
+	cp direct.man $(MAN3DIR)/directory.3
+	cp dirent.man $(MAN5DIR)/dirent.5
+
+tstdir:		tstdir.o $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ tstdir.o $(OBJS)
+
+LINT:		$(SRCS)
+	$(LINT) $(LFLAGS) $(DEFS) $(INCS) $(SRCS) > $@
+
+tidy:
+	rm -f $(JUNK)
+
+clean clobber:	tidy
+	rm -f $(OBJS) tstdir tstdir.o

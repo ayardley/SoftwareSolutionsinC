@@ -1,0 +1,20 @@
+This repository contains the original source code found on the floppy disk
+accompanying the text: Software Solutions in C (Dale Schumacher ed. 1994).
+
+Though dated, much of this source code is still, in my opinion, worthy of
+preservation. Consequently, I have elected to upload this repository to
+ensure both its preservation and its accessibility.
+
+Note: Each code unit in this repository contains its own license. Nothing,
+      either in preserving this repository or in making it accessible, shall
+      be construed to vary the respective appropriate licenses which attach
+      and apply to the respective code units. Moreover, the follow disclaimer
+      of liability applies:
+
+      THE MAINTAINER OF THIS REPOSITORY MAKES NO REPRESENTATIONS OR WARRANTIES
+      ABOUT THE SUITABILITY OF THIS SOFTWARE, EITHER EXPRESS OR IMPLIED,
+      INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+      FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.  THE MAINTAINER 
+      SHALL NOT BE HELD LIABLE FOR ANY DAMAGES SUSTAINED BY LICENSEE AS A 
+      RESULT OF USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
+      DERIVATIVES. 

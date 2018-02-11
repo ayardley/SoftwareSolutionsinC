@@ -1,0 +1,33 @@
+#
+#	Makefile for GSTREAM routines
+#
+
+#CFLAGS=	-O
+CFLAGS=	-g -ansi -pedantic -Wall
+
+all: gstream.o
+
+clean:
+	rm -f gstream.o gsposix.o gsstdio.o tstposix tststdio *.out
+
+test: tstposix tststdio
+	./tstposix
+	./tststdio
+
+tstposix: tstposix.c gsposix.o gstream.o
+	$(CC) $(CFLAGS) -o tstposix tstposix.c \
+		gsposix.o gstream.o ../str_lst/str.o
+
+tststdio: tststdio.c gsstdio.o gstream.o
+	$(CC) $(CFLAGS) -o tststdio tststdio.c \
+		gsstdio.o gstream.o ../str_lst/str.o
+
+gsposix.o: gsposix.c
+	$(CC) $(CFLAGS) -c gsposix.c
+
+gsstdio.o: gsstdio.c
+	$(CC) $(CFLAGS) -c gsstdio.c
+
+gstream.o: gstream.c
+	$(CC) $(CFLAGS) -c gstream.c
+

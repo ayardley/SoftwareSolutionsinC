@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 1994 by Academic Press, Boston, Massachusetts.
+ * Written by Douglas A. Gwyn.  Not derived from licensed software.
+ * From the book "Software Solutions in C", edited by Dale Schumacher.
+ *
+ * Permission is granted to anyone to use this software for any
+ * purpose on any computer system, and to redistribute it in any way,
+ * subject to the following restrictions:
+ *
+ *   1. The author is not responsible for the consequences of use of
+ *	this software, no matter how awful, even if they arise
+ *	from defects in it.
+ *
+ *   2. The origin of this software must not be misrepresented, either
+ *	by explicit claim or by omission.
+ *
+ *   3. Altered versions must be plainly marked as such, and must not
+ *	be misrepresented (by explicit claim or omission) as being
+ *	the original software.
+ *
+ *   4. This notice must not be removed or altered.
+ */
+
+/*
+	<sys/dirent.h> -- file system independent directory entry (SVR3)
+		(Aztec C65 ProDOS version)
+
+	last edit:	30-Apr-1993	Gwyn@ARL.Army.Mil
+
+	prerequisite:	<sys/types.h>
+*/
+
+/* DAG -- the following was moved from <dirent.h>, which was the wrong place */
+#define	MAXNAMLEN	128		/* maximum filename length */
+
+struct dirent				/* data from getdents()/readdir() */
+	{
+	long		d_ino;		/* key block number of entry */
+	off_t		d_off;		/* offset of disk directory entry */
+	unsigned short	d_reclen;	/* length of this record */
+	char		d_name[1];	/* name of file */	/* non-ANSI */
+	};
+
+#define	DIRENTBASESIZ		(sizeof(long) + sizeof(off_t) \
+				+ sizeof(unsigned short))	/* Aztec C65 */
+#define	DIRENTSIZ( namlen )	((DIRENTBASESIZ + sizeof(long) + (namlen)) \
+				/ sizeof(long) * sizeof(long))
+
+#ifndef NAME_MAX
+#define	NAME_MAX	(MAXNAMLEN - 1)	/* DAG -- required by POSIX.1 */
+#endif

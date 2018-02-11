@@ -1,0 +1,14 @@
+#
+# modem i/o for linux. (SYSV style, using select() and ioctl() to
+# do the various operations)
+#
+
+CFLAGS=-O -DLINUX -DSYSV -I../..
+
+OBJECTS= carrier.o disable.o dobreak.o enable.o flush.o \
+	receive.o slowputs.o ttyclose.o ttyin.o ttyopen.o \
+	ttyout.o ttyspeed.o ttystat.o ttywrite.o
+
+
+selectio.a: $(OBJECTS)
+	ar crv selectio.a $(OBJECTS)

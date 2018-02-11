@@ -1,0 +1,19 @@
+#
+# modem i/o for dos.  This assumes you're gonna have a fossil driver
+# (from FIDO) of some sort or another and it will fail if it can't
+# find one
+#
+# (Microsoft C)
+
+CFLAGS=-Gms -Ox -nologo -DMSDOS=1 -UOS2 -I..
+
+OBJECTS= carrier.obj disable.obj dobreak.obj enable.obj flush.obj \
+	receive.obj slowputs.obj ttyclose.obj ttyin.obj ttyopen.obj \
+	ttyout.obj ttyspeed.obj ttystat.obj ttywrite.obj
+
+
+dosio.lib: $(OBJECTS)
+	@rm -f dosio.lib
+	lib dosio +carrier+disable+dobreak+enable+flush+receive+slowputs;
+	lib dosio +ttyclose+ttyin+ttyopen+ttyout+ttyspeed+ttystat+ttywrite;
+	@rm -f dosio.bak

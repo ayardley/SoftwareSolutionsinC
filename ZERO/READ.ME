@@ -1,0 +1,18 @@
+This directory contains the sources for the ``Root Finding'' article
+in ``Software Solutions in C''.  The files are:
+
+	READ.ME		-- This file
+	zero.c		-- The root finding machinery
+	zero.h		-- Definitions for clients of ``zero.c''
+	sample.c	-- A simple usage example program
+	demo.c		-- A regression testing program
+	Makefile	-- A Unix makefile
+
+The makefile includes the following targets:
+
+	clean		-- remove program and object files
+	sample		-- build the simple example program ``sample''
+	demo		-- build the regression test program ``demo''
+	test		-- build ``demo'' and check it's output
+	all		-- build ``zero.o'' and ``sample'' (default)
+

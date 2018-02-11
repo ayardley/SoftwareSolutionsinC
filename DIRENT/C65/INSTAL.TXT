@@ -1,0 +1,104 @@
+
+
+			INSTALLATION INSTRUCTIONS
+
+
+The following instructions are specifically for Manx Software Systems Aztec C
+running under ProDOS (C65 V3.20B).  This package should be adaptable to other
+ProDOS C environments with relatively little trouble.  Installation should be
+done only by someone who is comfortable with modifying the standard C library
+and header files.  I assume that you have environment variables CLIB and
+INCLUDE set up to refer to the system library and header directories.
+
+DISCLAIMER:  Although I believe the code and procedures described here to be
+correct, I make no warranty of any kind, and you are advised to perform your
+own careful testing before making any substantial change like this to your
+programming environment.
+
+
+0)  Unpack the archive in an empty subdirectory; assuming you saved it (minus
+    any header and trailer added by mail systems) in a file named "gwyn.arc":
+
+	$ arcv gwyn.arc
+
+    If this does not work, use a text editor to hack apart the files; the
+    divisions and filenames should be obvious.
+
+1)  Install the header files:
+
+	$ unlock $INCLUDE
+	$ cp dirent.h $INCLUDE
+	$ mkdir $INCLUDE/sys
+	$ cp dir.syh $INCLUDE/sys/dir.h
+	$ cp dirent.syh $INCLUDE/sys/dirent.h
+	$ cp types.syh $INCLUDE/sys/types.h
+
+2)  Update the C libraries:
+
+	$ unlock $CLIB/c.lib $CLIB/ci.lib
+	$ cc clodir.c
+	$ cc getden.c
+	$ cc opedir.c
+	$ cc readir.c
+	$ cc rewdir.c
+	$ cc seedir.c
+	$ cc teldir.c
+	$ echo *.o >xlist
+	$ ord xlist olist
+	$ rm xlist
+	$ lb $CLIB/c.lib -b+ -f olist
+	$ rm *.o olist
+	$ cci clodir.c
+	$ cci getden.c
+	$ cci opedir.c
+	$ cci readir.c
+	$ cci rewdir.c
+	$ cci seedir.c
+	$ cci teldir.c
+	$ echo *.i >xlist
+	$ ord xlist ilist
+	$ rm xlist
+	$ lb $CLIB/ci.lib -b+ -f ilist
+	$ rm *.i ilist
+
+3)  To verify installation, try compiling, linking, and running the program
+    tstdir.c:
+
+	$ cc tstdir.c
+	$ ln tstdir.o -lc
+	$ rm tstdir.o
+
+    This program searches the specified directory named by the first argument
+    for each file named in the subsequent arguments and prints `"FOO" found.'
+    or `"FOO" not found.' where FOO is of course replaced by the name being
+    sought in the directory.  Try something like
+
+	$ tstdir . foo tstdir bar dirent.h xyzzy
+
+    which should produce the output
+
+	"foo" not found.
+	"tstdir" found.
+	"bar" not found.
+	"dirent.h" found.
+	"xyzzy" not found.
+
+    This program does not test the seekdir() and telldir() functions.
+
+4)  I have also included the freebie utility, lstdir.c.  This program acts
+    like a plain vanilla "ls ." (one entry per line).  Build it by invoking:
+
+	$ cc lstdir.c
+	$ ln lstdir.o -lc
+	$ rm lstdir.o
+
+    Feel free to hack on this but please DON'T send me your improvements!
+
+5)  The file "notes.txt" explains what this package is all about.  See the
+    UNIX manual entries for usage documentation.
+
+6)  In case of difficulty, you can TRY to reach me by e-mail, but I don't
+    guarantee I'll respond (it will depend on the message volume).  Remember
+    that this is free software and you shouldn't expect much support at these
+    prices.  Also, I no longer use the Aztec C environment (I switched to
+    ORCA/C on my Apple IIGS).	- Gwyn@ARL.Army.Mil

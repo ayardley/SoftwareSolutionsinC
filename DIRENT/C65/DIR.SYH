@@ -1,0 +1,102 @@
+/*
+ * Copyright (c) 1994 by Academic Press, Boston, Massachusetts.
+ * Written by Douglas A. Gwyn.  Not derived from licensed software.
+ * From the book "Software Solutions in C", edited by Dale Schumacher.
+ *
+ * Permission is granted to anyone to use this software for any
+ * purpose on any computer system, and to redistribute it in any way,
+ * subject to the following restrictions:
+ *
+ *   1. The author is not responsible for the consequences of use of
+ *	this software, no matter how awful, even if they arise
+ *	from defects in it.
+ *
+ *   2. The origin of this software must not be misrepresented, either
+ *	by explicit claim or by omission.
+ *
+ *   3. Altered versions must be plainly marked as such, and must not
+ *	be misrepresented (by explicit claim or omission) as being
+ *	the original software.
+ *
+ *   4. This notice must not be removed or altered.
+ */
+
+/*
+	<sys/dir.h> -- definitions for ProDOS directories
+
+	last edit:	30-Apr-1993	Gwyn@ARL.Army.Mil
+
+	Reference:	Apple IIGS ProDOS 16 Reference Manual
+
+	A directory consists of some number of blocks of DIRBLKSIZ bytes each.
+
+	Each DIRBLKSIZ-byte block contains two daddr_t block linkage pointers
+	followed by entries_per_block file entry structures, except that the
+	first entry in the first block is a directory header entry instead.
+	All entries (including the header) are entry_length bytes long.
+
+	There are file_count active entries in the directory; inactive entries
+	have 0 for their storage_type/name_length byte.
+
+	prerequisite:	<sys/types.h>
+*/
+
+#define	DIRBLKSIZ	512		/* size of directory block */
+
+#define	MAXNAMELEN	15		/* maximum filename length */
+/* NOTE:  not MAXNAMLEN, which has been preempted by SVR3 <dirent.h> */
+
+struct direct				/* directory entry data from read() */
+	{
+	unsigned char	d_namlen;	/* storage_type << 4 | name_length */
+#define	NAMELENMASK	0x0F		/* mask to isolate name_length */
+#define	STSHIFT		4		/* shift to isolate storage_type */
+#define	ST_SEEDLING	0x1		/* seedling file */
+#define	ST_SAPLING	0x2		/* sapling file */
+#define	ST_TREE		0x3		/* tree file */
+#define	ST_PASCAL	0x4		/* Pascal area */
+#define	ST_SUBDIR	0xD		/* subdirectory */
+#define	ST_SUBKEY	0xE		/* subdirectory key block */
+#define	ST_VOLKEY	0xF		/* volume directory key block */
+	char		d_name[MAXNAMELEN];	/* space-padded filename */
+	/* next four members valid for file entry only */
+	unsigned char	d_filtyp;	/* file_type */
+	daddr_t		d_keyptr;	/* key_pointer */
+	unsigned short	d_blused;	/* blocks_used */
+	unsigned char	d_eof[3];	/* 3-byte EOF */
+	Pdate_t		d_cdate;	/* create_date */
+	Ptime_t		d_ctime;	/* create_time */
+	unsigned char	d_ver;		/* version */
+	unsigned char	d_minver;	/* min_version */
+	union	{
+		struct	{		/* file entry only */
+			unsigned char	f_access;	/* access */
+			unsigned short	f_auxtyp;	/* aux_type */
+			Pdate_t		f_mdate;	/* mod_date */
+			Ptime_t		f_mtime;	/* mod_time */
+			daddr_t		f_hdrptr;	/* header_pointer */
+			}	f;
+		struct	{		/* volume or subdirectory only */
+			unsigned char	vs_access;	/* access */
+			unsigned char	vs_entlen;	/* entry_length */
+			unsigned char	vs_eperbl;	/* entries_per_block */
+			unsigned short	vs_filcnt;	/* file_count */
+			union	{
+				struct	{	/* volume directory only */
+					daddr_t		v_bitmap;
+						/* bit_map_pointer */
+					unsigned short	v_blocks;
+						/* total_blocks */
+					}	v;
+				struct	{	/* subdirectory only */
+					daddr_t		s_parptr;
+						/* parent_pointer */
+					unsigned char	s_parnum;
+						/* parent_entry_number */
+					unsigned char	s_parlen;
+						/* parent_entry_length */
+					}	s;
+				}	u;
+			}	vs;
+		}	u;
+	};

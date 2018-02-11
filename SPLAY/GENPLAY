@@ -1,0 +1,58 @@
+#! /bin/sh -x
+# Generate a test for a package that claims to handle insertion and
+# deletion of records ordered on a single key, where the command
+# 	a s1 s2
+# inserts datum s2 keyed by s1 (both strings),
+#	d s1
+# deletes datum keyed by s1 (a string)
+#	p
+# prints the ordered data.
+# Data is generated from the password file - the keys are login names
+# and the datum is the gecos field
+# 
+PASSWD=/etc/passwd
+
+#PASSWD=/scr/passwd
+DATAFIELD=5
+KEYFIELD=${1-1}
+KEYTYPE=${2-}
+
+echo e Insert in order passwd file is in
+awk -F: '$'$DATAFIELD' != "" {print "a", $'$KEYFIELD', $'$DATAFIELD'}' $PASSWD
+echo e printing after load
+echo 'p'
+echo e Delete in ascending order
+awk -F: '$'$DATAFIELD' != "" {print "d", $'$KEYFIELD'}' $PASSWD | sort +1$KEYTYPE
+echo e print after delete - should be none.
+echo 'p'
+echo e Insert in order passwd file is in
+awk -F: '$'$DATAFIELD' != "" {print "a", $'$KEYFIELD', $'$DATAFIELD'}' $PASSWD
+echo e Delete in descending order
+awk -F: '$'$DATAFIELD' != "" {print "d", $'$KEYFIELD'}' $PASSWD | sort -r +1$KEYTYPE
+echo e print - should be none.
+echo 'p'
+echo e Insert in ascending order
+awk -F: '$'$DATAFIELD' != "" {print "a", $'$KEYFIELD', $'$DATAFIELD'}' $PASSWD | sort +1$KEYTYPE
+echo e Delete in ascending order
+awk -F: '$'$DATAFIELD' != "" {print "d", $'$KEYFIELD'}' $PASSWD | sort +1$KEYTYPE
+echo e print - should be none.
+echo 'p'
+echo e Insert in ascending order
+awk -F: '$'$DATAFIELD' != "" {print "a", $'$KEYFIELD', $'$DATAFIELD'}' $PASSWD | sort +1$KEYTYPE
+echo e Delete in descending order
+awk -F: '$'$DATAFIELD' != "" {print "d", $'$KEYFIELD'}' $PASSWD | sort -r +1$KEYTYPE
+echo e print - should be none.
+echo 'p'
+echo e Insert in descending order
+awk -F: '$'$DATAFIELD' != "" {print "a", $'$KEYFIELD', $'$DATAFIELD'}' $PASSWD | sort -r +1$KEYTYPE
+echo e print - should be none.
+awk -F: '$'$DATAFIELD' != "" {print "d", $'$KEYFIELD'}' $PASSWD | sort -r +1$KEYTYPE
+echo e print - should be none.
+echo 'p'
+echo e Insert in descending order
+awk -F: '$'$DATAFIELD' != "" {print "a", $'$KEYFIELD', $'$DATAFIELD'}' $PASSWD | sort -r +1$KEYTYPE
+echo e Delete in ascending order
+awk -F: '$'$DATAFIELD' != "" {print "d", $'$KEYFIELD'}' $PASSWD | sort +1$KEYTYPE
+echo e print - should be none.
+echo 'p'
+echo e done.

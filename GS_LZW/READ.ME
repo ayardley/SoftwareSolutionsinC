@@ -1,0 +1,17 @@
+The files in this directory implement an LZW compression/decompression
+byte stream built on top of Kent Schumacher's ``Generic Streams'',
+which is in turn is built on top of Dennis Jelcic's ``Dynamic Strings
+and Lists''.  Thus the files in "../gstream" and "../str_lst" are required
+to compile and link the code in this package.
+
+The file in this directory include:
+	READ.ME		This file
+	Makefile	A Unix-based makefile
+	gslzw.h		Definitions for LZW GSTREAM interface
+	gslzw.c		LZW GSTREAM interface implementation
+	gscomp.c	LZW compression code
+	gsdecomp.c	LZW decompression code
+	tst_lzw.c	Test program for LZW GSTREAM
+	sample		Test input (compressed "READ.ME")
+	sample.out	Test output (re-compressed "READ.ME")
+

@@ -1,0 +1,203 @@
+/*
+ *	source file created by bnf2c
+ */
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "str.h"
+#include "lst.h"
+#include "parser.h"
+
+void
+parse_Lines(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_TERMINAL(P, '.');
+	BNF_OR(P);
+		BNF_NON(P, parse_Expr(P));
+		BNF_TERMINAL(P, '\n');
+		BNF_NON(P, parse_Lines(P));
+	BNF_END(P);
+}
+
+void
+parse_Expr(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_NON(P, parse_Assign(P));
+	BNF_OR(P);
+		BNF_NON(P, parse_Addop(P));
+	BNF_END(P);
+}
+
+void
+parse_Assign(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_NON(P, parse_Ident(P));
+		BNF_TERMINAL(P, '=');
+		BNF_NON(P, parse_Expr(P));
+	BNF_END(P);
+}
+
+void
+parse_Addop(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_NON(P, parse_Mulop(P));
+		BNF_NON(P, parse_Addtail(P));
+	BNF_END(P);
+}
+
+void
+parse_Addtail(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_TERMINAL(P, '+');
+		BNF_NON(P, parse_Mulop(P));
+		BNF_NON(P, parse_Addtail(P));
+	BNF_OR(P);
+		BNF_TERMINAL(P, '-');
+		BNF_NON(P, parse_Mulop(P));
+		BNF_NON(P, parse_Addtail(P));
+	BNF_OR(P);
+	BNF_END(P);
+}
+
+void
+parse_Mulop(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_NON(P, parse_Unop(P));
+		BNF_NON(P, parse_Multail(P));
+	BNF_END(P);
+}
+
+void
+parse_Multail(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_TERMINAL(P, '*');
+		BNF_NON(P, parse_Unop(P));
+		BNF_NON(P, parse_Multail(P));
+	BNF_OR(P);
+		BNF_TERMINAL(P, '/');
+		BNF_NON(P, parse_Unop(P));
+		BNF_NON(P, parse_Multail(P));
+	BNF_OR(P);
+	BNF_END(P);
+}
+
+void
+parse_Unop(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_TERMINAL(P, '+');
+		BNF_NON(P, parse_Unop(P));
+	BNF_OR(P);
+		BNF_TERMINAL(P, '-');
+		BNF_NON(P, parse_Unop(P));
+	BNF_OR(P);
+		BNF_NON(P, parse_Prim(P));
+	BNF_END(P);
+}
+
+void
+parse_Prim(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_NON(P, parse_Ident(P));
+	BNF_OR(P);
+		BNF_NON(P, parse_Number(P));
+	BNF_OR(P);
+		BNF_TERMINAL(P, '(');
+		BNF_NON(P, parse_Expr(P));
+		BNF_TERMINAL(P, ')');
+	BNF_END(P);
+}
+
+void
+parse_Ident(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_NON(P, parse_Letter(P));
+		BNF_NON(P, parse_Ident(P));
+	BNF_OR(P);
+		BNF_NON(P, parse_Letter(P));
+	BNF_END(P);
+}
+
+void
+parse_Number(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_TERMINAL(P, '+');
+		BNF_NON(P, parse_Digits(P));
+	BNF_OR(P);
+		BNF_TERMINAL(P, '-');
+		BNF_NON(P, parse_Digits(P));
+	BNF_OR(P);
+		BNF_NON(P, parse_Digits(P));
+	BNF_END(P);
+}
+
+void
+parse_Digits(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_NON(P, parse_Digit(P));
+		BNF_NON(P, parse_Digits(P));
+	BNF_OR(P);
+		BNF_NON(P, parse_Digit(P));
+	BNF_END(P);
+}
+
+void
+parse_Digit(BNF_PARSER *P)
+{
+	int c;
+
+	BNF_BEGIN(P);
+		BNF_ONEOF(P, "0123456789", c);
+	BNF_END(P);
+}
+
+/* function prototypes (move to top of file) */
+void	parse_Lines(BNF_PARSER *P);
+void	parse_Expr(BNF_PARSER *P);
+void	parse_Assign(BNF_PARSER *P);
+void	parse_Addop(BNF_PARSER *P);
+void	parse_Addtail(BNF_PARSER *P);
+void	parse_Mulop(BNF_PARSER *P);
+void	parse_Multail(BNF_PARSER *P);
+void	parse_Unop(BNF_PARSER *P);
+void	parse_Prim(BNF_PARSER *P);
+void	parse_Ident(BNF_PARSER *P);
+void	parse_Number(BNF_PARSER *P);
+void	parse_Digits(BNF_PARSER *P);
+void	parse_Digit(BNF_PARSER *P);
